@@ -1,3 +1,24 @@
+use std::fmt;
+
+#[derive(Debug)]
+struct Structure(i32);
+
+#[derive(Debug)]
+struct Deep(Structure);
+
+// To use the `{}` marker, the trait `fmt::Display` must be implemented
+// manually for the type.
+impl fmt::Display for Structure {
+    // This trait requires `fmt` with this exact signature.
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        // Write strictly the first element into the supplied output
+        // stream: `f`. Returns `fmt::Result` which indicates whether the
+        // operation succeeded or failed. Note that `write!` uses syntax which
+        // is very similar to `println!`.
+        write!(f, "{}", self.0)
+    }
+}
+
 fn main() {
     println!("{}", 32);
 
@@ -28,11 +49,22 @@ fn main() {
     // Padding with named arguments
     println!("{number:0<with$}", number = 1, with = 10);
 
-    #[allow(dead_code)] // Disable deadcode
-    struct Structure(i32);
-
     let number: f64 = 1.0;
     let width: usize = 5;
     let sentence: String = format!("Hi, I'm {}", "Bob");
     println!("Bob: {} {number:>width$}", sentence);
+
+    // Printing with `{:?}` is similar to with `{}`.
+    println!("{:?} months in a year.", 12);
+    println!(
+        "{1:?} {0:?} is the {actor:?} name.",
+        "Slater",
+        "Christian",
+        actor = "actor's"
+    );
+
+    // `Structure` is printable!
+    println!("Now {:#?} will print!", Structure(3));
+
+    println!("Now {:#?} will print!", Deep(Structure(7)));
 }
